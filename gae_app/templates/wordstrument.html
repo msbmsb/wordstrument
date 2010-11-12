@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block header %}
+{% endblock %}
+{% block content %}
+  {% if http_get %}
+    <div class="post">
+      <h1 class="title">Enter some text</h1>
+      <div class="entry">
+          <p>
+            <form method="POST" action="/ws">
+              Enter some text to turn into music ("music"?):
+              <textarea name="content" rows="3" cols="60"></textarea>
+              <br />Choose your scale:<br />
+              {% for scale in scales %}
+                <br /><input type="radio" name="scale" id="scale" value={{ scale }} />{{ scale }}
+              {% endfor %}
+              <br /><input type="submit" id="button" value="Sing for me! SING!" />
+            </form>
+          </p>
+      </div>
+    </div>
+  {% else %}
+    <div class="post">
+      <h1 class="title">Wordstrument output</h1>
+      <div class="entry">
+          <h3>Here is what the wordstrument produced for the text:</h3>
+          <p class="box1"> {{ text_in }} </p>
+          <h3>Raw notes:</h3>
+          <p class="box2"> {{ raw_notes }} </p>
+          <h3>In-key notes for the key of {{ root }}-{{ scale_used }}:</h3>
+          <p class="box2"> {{ in_key_notes }} </p>
+      </div>
+
+      <h1 class="title">Enter some more text</h1>
+      <div class="entry">
+          <p>
+            <form method="POST" action="/ws">
+              Enter some text to turn into music ("music"?):
+              <textarea name="content" rows="3" cols="60"></textarea>
+              <br />Choose your scale:<br />
+              {% for scale in scales %}
+                <br /><input type="radio" name="scale" id="scale" value={{ scale }} />{{ scale }}
+              {% endfor %}
+              <br /><input type="submit" id="button" value="Sing for me! SING!" />
+            </form>
+          </p>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
