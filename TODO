@@ -1,0 +1,27 @@
+*******************************************************************************
+* TODO
+*******************************************************************************
+
+Features
+  * add option for splitting on syllables
+
+Bugs
+  * in scale-mapping where not all notes are assigned a map because of things like a# == b-flat
+
+Webapp
+  * fill out content for 'about' section
+  Appearance
+    * update css
+      * expand center content area?
+    * update favicon
+  REST
+    * implement RESTful API for GET-enabled note generation
+
+Tablature
+  * convert notes to guitar string/fret locations
+  * include vexflow converter in output
+  * investigate placement of corresponding text beneath notes
+
+Audio output
+  * investigate existing html5 libraries for midi/audio generation
+  * convert notes into frequencies
