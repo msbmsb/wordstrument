@@ -17,6 +17,7 @@ import yaml
 import logging
 
 from lib.sequence import Sequence
+import lib.tablature as tablature
 from lib.scale import step_patterns
 
 class WordstrumentHandler(webapp.RequestHandler):
@@ -44,6 +45,10 @@ class WordstrumentHandler(webapp.RequestHandler):
     raw_notes.snapToKey()
     in_key_notes_str = raw_notes.to_str()
 
+    # tablature
+    fretboard = tablature.GuitarFretboard(tablature.six_string_std)
+    tab = tablature.GuitarTabSequence(fretboard, raw_notes)
+
     template_values = {
       'http_get': False,
       'text_in': text_in,
@@ -51,7 +56,8 @@ class WordstrumentHandler(webapp.RequestHandler):
       'root': raw_notes.getRoot(),
       'scale_used': raw_notes.getScaleName(),
       'in_key_notes': in_key_notes_str,
-      'scales': step_patterns.keys()
+      'scales': step_patterns.keys(),
+      'vextab_code': tab.to_str()
     }
 
     path = os.path.join(
