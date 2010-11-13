@@ -31,7 +31,7 @@ class Sequence(object):
     if not self.scale_notes and \
         self.notes and len(self.notes) > 0 and \
         len(self.scale_name) > 0:
-      self.getScaleNotes()
+      self.setScaleMap()
 
   def getRoot(self):
     if self.scale_notes:
@@ -43,20 +43,23 @@ class Sequence(object):
 
   def setScale(self, scale_name):
     if not scale_name: 
-      scale_name = 'major'
+      scale_name = scale.step_patterns.keys()[0]
 
-    if scale_name not in scale.step_patterns:
+    if scale_name not in scale.step_patterns.keys():
       # ERROR
       print "ERROR: %s is not a known scale (yet)" % scale_name
       return
     self.scale_name = scale_name
     if len(self.notes) > 0:
-      self.getScaleNotes()
+      self.setScaleMap()
 
   def getScaleName(self):
     return self.scale_name
 
-  def getScaleNotes(self):
+  def getScaleMap(self):
+    return self.scale_map
+
+  def setScaleMap(self):
     self.scale_notes = scale.get_scale(self.notes, self.scale_name)
     if self.scale_notes:
       for n in self.scale_notes:
@@ -73,4 +76,5 @@ class Sequence(object):
       if n.note not in self.scale_map:
         self.notes.remove(n)
         continue
+
       n.accidental = self.scale_map[n.note]
