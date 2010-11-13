@@ -37,12 +37,13 @@ def get_scale(notes, scale, direction=None):
   root = deepcopy(notes[0])
 
   # move away from min/max octave levels
-  if notes[0].octave >= globals.max_octave:
+  if notes[0].octave >= globals.MAX_OCTAVE:
     direction = -1
-  if notes[0].octave <= globals.min_octave:
+  if notes[0].octave <= globals.MIN_OCTAVE:
     direction = 1
 
   allowable_notes = []
+  added_notes = []
 
   prev = deepcopy(root)
   root.octave = 0
@@ -56,21 +57,20 @@ def get_scale(notes, scale, direction=None):
         new_note.dec(True)
       else:
         new_note.inc(True)
-    # if pitch is same as previous, inc pitch and set accidental
+
     prev_note = prev.note
     prev = deepcopy(new_note)
     new_note.octave = 0
     new_note.duration = 0.0
-    if None and new_note.note == prev_note:
-      if direction == -1:
-        new_note.decNote()
-        new_note.accidental = 'sharp'
-      else:
-        new_note.incNote()
-        new_note.accidental = 'flat'
-    allowable_notes.append(new_note)
 
-  print "Allowed: " 
-  for a in allowable_notes:
-    print "  " + a.to_str()
+    # when incrementing up the scale, it is possible to reach a stage where there is:
+    # g-n...a-n...a-#...c-n
+    # when what is needed is one note instance for all notes in scale, i.e. it's missing the b
+    # use alternate notation to turn that a-# into b-flat so that b is represented in scale
+    if new_note.note in added_notes:
+      new_note = new_note.getAlternateNotation()
+
+    allowable_notes.append(new_note)
+    added_notes.append(new_note.note)
+
   return allowable_notes
