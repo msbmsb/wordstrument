@@ -20,7 +20,7 @@ def stringToTokens(str):
 
 # generate a feature vector for a given input word string
 def wordToFV(word):
-  fv = list(globals.alpha)
+  fv = list(globals.ALPHA)
 
   # normalize all unicode characters
   if type(word) == unicode:
@@ -105,7 +105,7 @@ def emitNote(t):
 
 # emit a pause Note from the input string
 def emitPause(t):
-  note_to_emit = Note('P0')
+  note_to_emit = Note(globals.PAUSE)
 
   # from Michelle
   if(t == ','): note_to_emit.duration = 0.25

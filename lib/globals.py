@@ -9,37 +9,38 @@ characters to notes.
 """
 
 # globals
-primary_notes = 'abcdefg'
-allalpha = 'abcdefghijklmnopqrstuvwxyz'
-alpha = 26*[0.0]
+PRIMARY_NOTES = 'cdefgab'
+PAUSE = 'P0'
+ALLALPHA = 'abcdefghijklmnopqrstuvwxyz'
+ALPHA = 26*[0.0]
 
 # with octaves
-a0 = list(alpha)
-b0 = list(alpha)
-c0 = list(alpha)
-d0 = list(alpha)
-e0 = list(alpha)
-f0 = list(alpha)
-g0 = list(alpha)
-a1 = list(alpha)
-b1 = list(alpha)
-c1 = list(alpha)
-d1 = list(alpha)
-e1 = list(alpha)
-f1 = list(alpha)
-g1 = list(alpha)
-a2 = list(alpha)
-b2 = list(alpha)
-c2 = list(alpha)
-d2 = list(alpha)
-e2 = list(alpha)
-f2 = list(alpha)
-g2 = list(alpha)
-c3 = list(alpha)
-d3 = list(alpha)
-e3 = list(alpha)
-f3 = list(alpha)
-g3 = list(alpha)
+a0 = list(ALPHA)
+b0 = list(ALPHA)
+c0 = list(ALPHA)
+d0 = list(ALPHA)
+e0 = list(ALPHA)
+f0 = list(ALPHA)
+g0 = list(ALPHA)
+a1 = list(ALPHA)
+b1 = list(ALPHA)
+c1 = list(ALPHA)
+d1 = list(ALPHA)
+e1 = list(ALPHA)
+f1 = list(ALPHA)
+g1 = list(ALPHA)
+a2 = list(ALPHA)
+b2 = list(ALPHA)
+c2 = list(ALPHA)
+d2 = list(ALPHA)
+e2 = list(ALPHA)
+f2 = list(ALPHA)
+g2 = list(ALPHA)
+c3 = list(ALPHA)
+d3 = list(ALPHA)
+e3 = list(ALPHA)
+f3 = list(ALPHA)
+g3 = list(ALPHA)
 
 a0[0] = 1.0 #a -> a3
 b0[1] = 1.0 #b -> b3
@@ -69,13 +70,13 @@ d3[24] = 1.0 #y -> f2
 c3[25] = 1.0 #z -> g2
 
 # no octaves
-a = list(alpha)
-b = list(alpha)
-c = list(alpha)
-d = list(alpha)
-e = list(alpha)
-f = list(alpha)
-g = list(alpha)
+a = list(ALPHA)
+b = list(ALPHA)
+c = list(ALPHA)
+d = list(ALPHA)
+e = list(ALPHA)
+f = list(ALPHA)
+g = list(ALPHA)
 
 a[0] = 1.0
 a[13] = 1.0
@@ -104,5 +105,9 @@ g[7] = 1.0
 g[20] = 1.0
 g[21] = 1.0
 
-max_octave = 6
-min_octave = 2
+MAX_OCTAVE = 6
+MIN_OCTAVE = 2
+
+SHARP = '#'
+FLAT = 'b'
+NATURAL = 'n'

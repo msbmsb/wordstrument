@@ -17,9 +17,9 @@ import selection
 from vector_similarity import cosine_similarity
 
 # accidentals variables
-sharp = list(globals.alpha)
-flat = list(globals.alpha)
-natural = list(globals.alpha)
+sharp = list(globals.ALPHA)
+flat = list(globals.ALPHA)
+natural = list(globals.ALPHA)
 
 # vowels are natural, natural is the tie-breaker as well
 natural[0] = 1.0
@@ -57,24 +57,24 @@ def choose_accidental(fv, note):
   accidental = ''
 
   scores = {
-    'natural':cosine_similarity(natural,fv),
-    'sharp':cosine_similarity(sharp,fv),
-    'flat':cosine_similarity(flat,fv)
+    globals.NATURAL:cosine_similarity(natural,fv),
+    globals.SHARP:cosine_similarity(sharp,fv),
+    globals.FLAT:cosine_similarity(flat,fv)
   }
   sorted_scores = sorted(scores.iteritems(), key=lambda (k,v):(v,k), reverse=True)
 
   if(len(sorted_scores) > 1):
     tops = selection.select_top_same_scores(sorted_scores)
-    if('natural' in tops):
-      accidental = 'natural'
+    if(globals.NATURAL in tops):
+      accidental = globals.NATURAL
     else:
       accidental = random.choice(tops)
   else:
     accidental = sorted_scores[0]
 
-  if((accidental == 'flat') and (note == 'c' or note == 'f')):
-    accidental = 'natural'
-  if((accidental == 'sharp') and (note == 'b' or note == 'e')):
-    accidental = 'natural'
+  if((accidental == globals.FLAT) and (note == 'c' or note == 'f')):
+    accidental = globals.NATURAL
+  if((accidental == globals.SHARP) and (note == 'b' or note == 'e')):
+    accidental = globals.NATURAL
 
   return accidental
