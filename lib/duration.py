@@ -27,3 +27,17 @@ def calculate_duration(t):
   if(l<11): return 1
   return 2
 
+# VexFlow notation (moved down since vexflow handles 1/32 to whole)
+vexFlowNotation = {
+  0.0625:'32',
+  0.125:'16',
+  0.25:'8',
+  0.5:'q',
+  1:'h',
+  2:'w'
+}
+
+def toVexFlowNotation(d):
+  if d not in vexFlowNotation.keys():
+    return None
+  return vexFlowNotation[d]
