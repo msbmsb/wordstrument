@@ -1,31 +1,42 @@
-from globals import primary_notes
+from copy import deepcopy
+import globals
 
 class Note(object):
-  def __init__(self, note):
+  def __init__(self, note_in):
+    note = deepcopy(note_in)
     self.note = note[0]
-    self.octave = int(note[1])
-    self.accidental = None
+    if len(note) > 1:
+      self.octave = int(note[1])
+    else:
+      self.octave = 4
+    if len(note) > 2:
+      self.accidental = note[-1]
+    else:
+      self.accidental = globals.NATURAL
     self.duration = None
     self.fv = []
 
   def to_str(self):
-    return "%s%s/%s/%s" % (self.note, self.octave, self.accidental, self.duration)
+    if self.duration:
+      return "%s%s/%s/%s" % (self.note, self.octave, self.accidental, self.duration)
+    else:
+      return "%s%s/%s" % (self.note, self.octave, self.accidental)
 
   def noteToIndex(self, note_in=None):
     whatToIndex = self.note
     if note_in:
       whatToIndex = note_in
     
-    if whatToIndex not in primary_notes:
+    if whatToIndex not in globals.PRIMARY_NOTES:
       return None
 
-    return primary_notes.index(whatToIndex)
+    return globals.PRIMARY_NOTES.index(whatToIndex)
 
   def indexToNote(self, index):
     if index > 6 or index < 0:
       return None
 
-    return primary_notes[index]
+    return globals.PRIMARY_NOTES[index]
 
   def is_identical_to(self, other, noOctave=None):
     # check for surface identity
@@ -47,22 +58,22 @@ class Note(object):
 
     # if both are natural, or both have same accidental,
     # then it cannot be equivalent through sharp/flat
-    if (self.accidental == 'natural' and other.accidental == 'natural') or \
+    if (self.accidental == globals.NATURAL and other.accidental == globals.NATURAL) or \
        (self.accidental == other.accidental):
       return False
 
     # find the sharp
     sharp_note = None
     other_note = None
-    if self.accidental == 'sharp':
+    if self.accidental == globals.SHARP:
       sharp_note = self
       other_note = other
-    elif other.accidental == 'sharp':
+    elif other.accidental == globals.SHARP:
       sharp_note = other
       other_note = self 
     if sharp_note:
       # drop accidental, increment 1, decrement by 0.5 and compare
-      sharp_note.accidental = 'natural'
+      sharp_note.accidental = globals.NATURAL
       sharp_note.inc()
       sharp_note.dec(True)
       if not sharp_note.is_identical_to(other_note, noOctave):
@@ -70,15 +81,15 @@ class Note(object):
     # if dne, find the flat
     else:
       flat_note = None
-      if self.accidental == 'flat':
+      if self.accidental == globals.FLAT:
         flat_note = self
         other_note = other
-      elif other.accidental == 'flat':
+      elif other.accidental == globals.FLAT:
         flat_note = other
         other_note = self 
       if flat_note:
         # drop accidental, decrement 1, increment by 0.5 and compare
-        flat_note.accidental = 'natural'
+        flat_note.accidental = globals.NATURAL
         flat_note.dec()
         flat_note.inc(True)
         if not flat_note.is_identical_to(other_note, noOctave):
@@ -135,9 +146,9 @@ class Note(object):
       return 1
     if other.note > self.note:
       return -1
-    if self.accidental == 'sharp' and other.accidental != 'sharp':
+    if self.accidental == globals.SHARP and other.accidental != globals.SHARP:
       return 1
-    if other.accidental == 'sharp' and self.accidental != 'sharp':
+    if other.accidental == globals.SHARP and self.accidental != globals.SHARP:
       return -1
     return 0
 
@@ -158,34 +169,60 @@ class Note(object):
         diff -= 0.5
     return diff
 
+  # get the alternate writing of this note, if exists
+  # e.g. a# == b-flat
+  def getAlternateNotation(self):
+    new_note = deepcopy(self)
+
+    # if c or f, the only alternate is b# or e#
+    if new_note.accidental == globals.NATURAL and \
+        (new_note.note == 'f' or new_note.note == 'c'):
+      new_note.dec()
+      new_note.accidental = globals.SHARP
+      return new_note
+
+    # if note is sharp, return next pitch, flat
+    if new_note.accidental == globals.SHARP:
+      new_note.inc()
+      new_note.accidental = globals.FLAT
+      return new_note
+
+    # if note is flat, return prev pitch, sharp
+    if new_note.accidental == globals.FLAT:
+      new_note.dec()
+      new_note.accidental = globals.SHARP
+      return new_note
+
+    # otherwise, if note is not c/f and is natural, there is no alternate
+    return self
 
   # increment
   def inc(self, half=None):
     if half:
       # if note is flat, make it natural and return
-      if self.accidental == 'flat':
-        self.accidental = 'natural'
+      if self.accidental == globals.FLAT:
+        self.accidental = globals.NATURAL
         return
 
       # if note not sharp and can be sharp, make it sharp
       # otherwise increment note
-      if self.accidental != 'sharp':
+      if self.accidental != globals.SHARP:
         if self.note != 'b' and self.note != 'e':
-          self.accidental = 'sharp'
+          self.accidental = globals.SHARP
           return
         else:
           # b or e
           return self.incNote()
       else:
         # if already sharp, make it natural and increment note
-        self.accidental = 'natural'
+        self.accidental = globals.NATURAL
         return self.incNote()
 
     else:
       # whole increment
       self.incNote()
       if self.note == 'c' or self.note == 'f':
-        self.accidental = 'sharp'
+        self.accidental = globals.SHARP
 
   def incNote(self):
     index = self.noteToIndex()
@@ -202,29 +239,29 @@ class Note(object):
   def dec(self, half=None):
     if half:
       # if note is sharp, make it natural and return
-      if self.accidental == 'sharp':
-        self.accidental = 'natural'
+      if self.accidental == globals.SHARP:
+        self.accidental = globals.NATURAL
         return
 
       # if note not flat and can be flat, make it flat
       # otherwise increment note
-      if self.accidental != 'flat':
+      if self.accidental != globals.FLAT:
         if self.note != 'c' and self.note != 'f':
-          self.accidental = 'flat'
+          self.accidental = globals.FLAT
           return
         else:
           # c or f
           return self.decNote()
       else:
         # if already flat, make it natural and decrement note
-        self.accidental = 'natural'
+        self.accidental = globals.NATURAL
         return self.decNote()
 
     else:
       # whole decrement
       self.decNote()
       if self.note == 'b' or self.note == 'e':
-        self.accidental = 'flat'
+        self.accidental = globals.FLAT
 
   def decNote(self):
     index = self.noteToIndex()
@@ -239,7 +276,7 @@ class Note(object):
 
   # TODO: c-flat is a b, b-sharp is a c, etc.
   def adjustAccidental(self):
-    if self.note in ['b','e'] and self.accidental == 'sharp':
-      self.accidental = 'natural'
-    if self.note in ['c','f'] and self.accidental == 'flat':
-      self.accidental = 'natural'
+    if self.note in ['b','e'] and self.accidental == globals.SHARP:
+      self.accidental = globals.NATURAL
+    if self.note in ['c','f'] and self.accidental == globals.FLAT:
+      self.accidental = globals.NATURAL
