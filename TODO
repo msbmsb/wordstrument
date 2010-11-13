@@ -2,11 +2,15 @@
 * TODO
 *******************************************************************************
 
+General
+  * replace letter-octave notation with numerical notation throughout
+  * replace accidental notation with enumeration
+
 Features
   * add option for splitting on syllables
 
 Bugs
-  * in scale-mapping where not all notes are assigned a map because of things like a# == b-flat
+  * fix tablature to avoid notes outside of available fret positions (e.g. d2 in std tuning)
 
 Webapp
   * fill out content for 'about' section
@@ -18,8 +22,6 @@ Webapp
     * implement RESTful API for GET-enabled note generation
 
 Tablature
-  * convert notes to guitar string/fret locations
-  * include vexflow converter in output
   * investigate placement of corresponding text beneath notes
 
 Audio output
