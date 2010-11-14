@@ -40,6 +40,10 @@ six_string_fret_notes = [
   ['f4#',	'b4',	'e5',	'a5',	'c6#',	'f6#'],
 ]
 
+# multiplier to modify the distance from string-to-string over moving to 
+# a different fret (i.e. less than 1 makes the distance fn prefer 
+# adjacent strings over moving up & down fretboard
+STRING_DIST_MUL = 0.5
 
 class GuitarFretboard(object):
   def __init__(self, tuning):
@@ -83,7 +87,7 @@ class GuitarFretboard(object):
     next_locs = self.index(next_note)
     if not next_locs:
       return None
-    nearest_loc_index = sorted(dict((i,score) for i,score in enumerate([sqrt((current[0]-loc[0])**2 + (current[1]-loc[1])**2) for loc in next_locs])).iteritems(), key=lambda (k,v):(v,k))[0][0]
+    nearest_loc_index = sorted(dict((i,score) for i,score in enumerate([sqrt((current[0]-loc[0])**2 + ((current[1]-loc[1])*STRING_DIST_MUL)**2) for loc in next_locs])).iteritems(), key=lambda (k,v):(v,k))[0][0]
     return next_locs[nearest_loc_index]
 
   def to_str(self):
