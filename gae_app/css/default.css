@@ -182,17 +182,17 @@ input, textarea, select {
 /* Page */
 
 #page {
-	width: 663px;
+	width: 703px;
 	margin: 0 auto;
 	background: #4c4c4c;
-	padding: 0 25px;
+	padding: 0 5px;
 }
 
 /* Content */
 
 #content {
 	float: left;
-	width: 410px;
+	width: 703px;
 	
 }
 

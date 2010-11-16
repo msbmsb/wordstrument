@@ -2,6 +2,14 @@
 {% block header %}
 {% endblock %}
 {% block content %}
+  {% if error %}
+    <div class="post">
+      <h1 class="title">There was an error</h1>
+      <div class="entry">
+        <p>{{ error }}</p>
+      </div>
+    </div>
+  {% endif %}
   {% if http_get %}
     <div class="post">
       <h1 class="title">Enter some text</h1>
@@ -30,10 +38,13 @@
           <h3>In-key notes for the key of {{ root }}-{{ scale_used }}:</h3>
           <p class="box2"> {{ in_key_notes }} </p>
           <h3>Notation:</h3>
-          <div class="vex-tabdiv" width=400 scale=0.8>
+          {% for vextab_code in vextab_codes %}
+          <div class="vex-tabdiv" width=680 scale=0.8>
             tabstave notation=true
             notes {{ vextab_code }}
           </div>
+          {% endfor %}
+          <a href="http://wordstrumenttest.appspot.com/ws?{{ url_query }}">Link to this</a>
       </div>
 
       <h1 class="title">Enter some more text</h1>
