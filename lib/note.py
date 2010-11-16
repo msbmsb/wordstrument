@@ -1,3 +1,17 @@
+"""
+note.py:
+
+Contains one class
+* Note
+  - class to represent a note including pitch, duration, accidental, associated text
+  - methods to increment and decrement a Note
+  - comparison, equivalence and difference methods
+  - method to get alternate notation writings (e.g. A#/Bb)
+
+* Author:       Mitchell Bowden <mitchellbowden AT gmail DOT com>
+* License:      MIT License: http://creativecommons.org/licenses/MIT/
+"""
+
 from copy import deepcopy
 import globals
 
@@ -15,6 +29,7 @@ class Note(object):
       self.accidental = globals.NATURAL
     self.duration = None
     self.fv = []
+    self.text = None
 
   def to_str(self):
     if self.duration:
@@ -118,6 +133,9 @@ class Note(object):
     if other == None:
       return None
 
+    if self.note == globals.REST or other.note == globals.REST:
+      return None
+
     if noOctave:
       return self.compareNoOctave(other)
 
@@ -142,9 +160,9 @@ class Note(object):
 
     if self.is_equiv_to(other, True):
       return 0
-    if self.note > other.note:
+    if self.noteToIndex() > other.noteToIndex():
       return 1
-    if other.note > self.note:
+    if other.noteToIndex() > self.noteToIndex():
       return -1
     if self.accidental == globals.SHARP and other.accidental != globals.SHARP:
       return 1
@@ -152,18 +170,21 @@ class Note(object):
       return -1
     return 0
 
-  def difference(self, other):
-    comp = self.compare(other)
+  def difference(self, other_in):
+    comp = self.compare(other_in)
+    if comp is None:
+      return None
     if comp == 0:
       return 0
 
     # self > other
+    other = deepcopy(other_in)
     diff = 0
     if comp == 1:
       while not other.compare(self) == 0:
         other.inc(True)
         diff += 0.5
-    if comp == -11:
+    if comp == -1:
       while not other.compare(self) == 0:
         other.dec(True)
         diff -= 0.5
