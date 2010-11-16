@@ -5,6 +5,7 @@
 General
   * replace letter-octave notation with numerical notation throughout
   * replace accidental notation with enumeration
+  * improve fretboard next nearest lookup by adding additional lookahead to distance calc
 
 Features
   * add option for splitting on syllables
@@ -23,6 +24,7 @@ Webapp
 
 Tablature
   * investigate placement of corresponding text beneath notes
+  * add pauses to notation
 
 Audio output
   * investigate existing html5 libraries for midi/audio generation
