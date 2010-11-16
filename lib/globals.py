@@ -2,7 +2,7 @@
 globals.py:
 
 Global variable values for use in wordstrument. Contains the mappings for 
-characters to notes.
+characters to notes, allowable characters and so on.
 
 * Author:       Mitchell Bowden <mitchellbowden AT gmail DOT com>
 * License:      MIT License: http://creativecommons.org/licenses/MIT/
@@ -10,7 +10,9 @@ characters to notes.
 
 # globals
 PRIMARY_NOTES = 'cdefgab'
-PAUSE = 'P0'
+REST = 'R'
+ALL_VALID_NOTES = PRIMARY_NOTES + REST
+REST_NOTE = 'R0'
 ALLALPHA = 'abcdefghijklmnopqrstuvwxyz'
 ALPHA = 26*[0.0]
 

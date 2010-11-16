@@ -1,3 +1,13 @@
+"""
+emitter.py:
+
+Main function is emitNote(t). To emit a Note object representing the input string.
+Contains helper functions for creating the associated score vector and scoring.
+
+* Author:       Mitchell Bowden <mitchellbowden AT gmail DOT com>
+* License:      MIT License: http://creativecommons.org/licenses/MIT/
+"""
+
 from operator import itemgetter
 import unicodedata
 import re
@@ -15,6 +25,7 @@ import duration
 import globals
 
 # split on spaces & punctuation
+# known abnormality on apostrophes. keep for now.
 def stringToTokens(str):
   return re.sub(r"([\W])", r" \1 ", str).split()
 
@@ -84,7 +95,7 @@ def scoreNotesNoOctave(fv):
 # emit a Note object from the input string
 def emitNote(t):
   if t in punctuation:
-    return emitPause(t)
+    return emitRest(t)
 
   fv = wordToFV(t)
   sorted_scores = scoreNotesNoOctave(fv)
@@ -100,24 +111,27 @@ def emitNote(t):
   note_to_emit.accidental = accidental.choose_accidental(fv, note_to_emit.note)
   note_to_emit.duration = duration.calculate_duration(t)
   note_to_emit.fv = fv
+  note_to_emit.text = t
 
   return note_to_emit
 
-# emit a pause Note from the input string
-def emitPause(t):
-  note_to_emit = Note(globals.PAUSE)
+# emit a rest Note from the input string
+def emitRest(t):
+  note_to_emit = Note(globals.REST_NOTE)
+  note_to_emit.text = t
+  note_to_emit.duration = None
 
   # from Michelle
   if(t == ','): note_to_emit.duration = 0.25
   if(t == '.'): note_to_emit.duration = 1.0
-  if(t == '?'): note_to_emit.duration = 0.75
-  if(t == '!'): note_to_emit.duration = 0.75
+  if(t == '?'): note_to_emit.duration = 1.0
+  if(t == '!'): note_to_emit.duration = 1.0
   if(t == '-'): note_to_emit.duration = 0.25
   if(t == ':'): note_to_emit.duration = 0.125
   if(t == ';'): note_to_emit.duration = 0.5
 
   if note_to_emit.duration == None:
-    note_to_emit.duration = 0.0
+    return None
 
   return note_to_emit
 
