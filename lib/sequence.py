@@ -1,21 +1,49 @@
+"""
+sequence.py:
+
+Contains one class
+* Sequence
+  - class to represent a Sequence of Notes, given an optional scale specification
+  - methods to snap a Sequence of raw Notes to a given scale to keep it in key
+
+* Author:       Mitchell Bowden <mitchellbowden AT gmail DOT com>
+* License:      MIT License: http://creativecommons.org/licenses/MIT/
+"""
+
 from note import Note
 import scale
 import emitter
+import globals
 
 class Sequence(object):
   def __init__(self, str):
-    self.source_string = str
+    self.source_string = str.strip()
     self.notes = []
     self.scale_name = ""
     self.scale_notes = []
     self.scale_map = {}
     self.build_notes()
+    self.beats_per_bar = 1.0
 
   def build_notes(self):
     toks = emitter.stringToTokens(self.source_string)
+    prev = None
     for t in toks:
       n = emitter.emitNote(t)
-      self.add(n)
+      if n is not None:
+        if prev:
+          # check difference of new note to previous one
+          # avoid wild swings up & down the octaves
+          diff = n.difference(prev)
+          if diff is not None and abs(diff) >= 6.0:
+            octmod = abs(int(diff/6.0))
+            if diff > 0:
+              n.octave -= octmod
+            elif diff < 0:
+              n.octave += octmod
+        self.add(n)
+        if n.note != globals.REST:
+          prev = n
 
   def to_str(self):
     retStr = ""
@@ -71,7 +99,7 @@ class Sequence(object):
       return
 
     for n in self.notes:
-      if n.note == 'P':
+      if n.note == globals.REST:
         continue
       if n.note not in self.scale_map:
         self.notes.remove(n)
