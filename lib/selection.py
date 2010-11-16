@@ -1,3 +1,12 @@
+"""
+selection.py:
+
+Methods for selecting items from score lists within emitter.py
+
+* Author:       Mitchell Bowden <mitchellbowden AT gmail DOT com>
+* License:      MIT License: http://creativecommons.org/licenses/MIT/
+"""
+
 def choose_top_score(sorted_scores):
   # if somehow there is no score on anything, return None
   if sorted_scores[0][1] == 0.0:
