@@ -3,6 +3,8 @@ octave.py
 
 Variables and functions for selecting the octave value for a given string.
 
+* Author:       Mitchell Bowden <mitchellbowden AT gmail DOT com>
+* License:      MIT License: http://creativecommons.org/licenses/MIT/
 """
 
 from math import floor
