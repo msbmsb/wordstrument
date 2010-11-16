@@ -1,3 +1,19 @@
+"""
+tablature.py:
+
+Contains two classes:
+
+* GuitarFretboard
+  - class for modelling a guitar fretboard given a tuning and number of frets.
+* GuitarTabSequence
+  - class for generating a tab sequence given a GuitarFretboard and a note Sequence
+  - attempts to find the most comfortable/realistic fingering positions for a sequence
+  - to_str() outputs in a format intended for vexflow rendering
+
+* Author:       Mitchell Bowden <mitchellbowden AT gmail DOT com>
+* License:      MIT License: http://creativecommons.org/licenses/MIT/
+"""
+
 from math import sqrt
 from lib.note import Note
 from lib.duration import toVexFlowNotation
@@ -10,6 +26,8 @@ six_string_std = [
 
 # 27*[6*[""]]
 # standard tuning
+# not actually used since the fretboard is automatically generated
+# given the tuning by GuitarFretboard.buildFretStringTable
 six_string_fret_notes = [
   ['e2',	'a2',	'd3',	'g3',	'b3',	'e4'],
   ['f2',	'a2#',	'd3#',	'g3#',	'c4',	'f4'],
@@ -47,7 +65,9 @@ STRING_DIST_MUL = 0.5
 
 class GuitarFretboard(object):
   def __init__(self, tuning):
+    # default 27 frets
     self.num_frets = 27
+    # default 6-string
     self.num_strings = 6
     self.fret_string_table = []
     if tuning:
@@ -114,20 +134,52 @@ class GuitarTabSequence(object):
   def buildTabSequence(self):
     curr = (0,0)
     for n in self.note_sequence.notes:
-      if n.note not in globals.PRIMARY_NOTES:
+      if n.note not in globals.ALL_VALID_NOTES:
         continue
-      nearest = self.fretboard.findNearest(curr, n)
-      if not nearest:
+      # for now, vexflow does not render rests... TODO
+      if n.note == globals.REST:
         continue
-      dur = toVexFlowNotation(n.duration)
+      dur = n.duration
+      if n.note != globals.REST:
+        nearest = self.fretboard.findNearest(curr, n)
+        if not nearest:
+          continue
+        curr = nearest
+      else:
+        dur = str(dur) + 'r'
+        nearest = (0,0)
       self.tab_sequence.append((nearest,dur))
-      curr = self.tab_sequence[-1][0]
 
   def indexToStringNum(self, index):
     return self.fretboard.num_strings - index
 
-  def to_str(self):
+  def split_str(self, notes_per_split=8):
+    start = 0
+    end = 8
+    retVal = []
+    while start < len(self.tab_sequence):
+      retVal.append(self.to_str(start, end))
+      start += notes_per_split
+      end += notes_per_split
+    return retVal
+
+  def to_str(self, start=0, end=None):
     retVal = ""
-    for n in self.tab_sequence:
-      retVal += ":%s %i/%i " % (n[-1],n[0][0],self.indexToStringNum(n[0][1]))
+    bar_duration = 0.0
+    if end is None or end < start or end > len(self.tab_sequence):
+      end = len(self.tab_sequence)
+    if start < 0 or start >= end:
+      return ""
+    for n in self.tab_sequence[start:end]:
+      if type(n[-1]) is not float and n[-1][-1] == 'r':
+        dur = float(n[-1][:-1])
+        bar_duration += dur
+      else:
+        dur = n[-1]
+        bar_duration += dur
+      # disable time bar display for now. TODO
+      if None and bar_duration >= self.note_sequence.beats_per_bar:
+        retVal += " | "
+        bar_duration = dur
+      retVal += ":%s %i/%i " % (toVexFlowNotation(n[-1]),n[0][0],self.indexToStringNum(n[0][1]))
     return retVal.strip()
