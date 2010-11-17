@@ -145,7 +145,7 @@ class GuitarTabSequence(object):
       else:
         dur = str(dur) + 'r'
         nearest = (0,0)
-      self.tab_sequence.append((nearest,dur))
+      self.tab_sequence.append((nearest,n.text,dur))
 
   def indexToStringNum(self, index):
     return self.fretboard.num_strings - index
@@ -178,5 +178,5 @@ class GuitarTabSequence(object):
       if None and bar_duration >= self.note_sequence.beats_per_bar:
         retVal += " | "
         bar_duration = dur
-      retVal += ":%s %i/%i " % (toVexFlowNotation(n[-1]),n[0][0],self.indexToStringNum(n[0][1]))
+      retVal += "\"%s :%s %i/%i " % (n[-2],toVexFlowNotation(n[-1]),n[0][0],self.indexToStringNum(n[0][1]))
     return retVal.strip()
