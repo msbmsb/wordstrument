@@ -136,9 +136,6 @@ class GuitarTabSequence(object):
     for n in self.note_sequence.notes:
       if n.note not in globals.ALL_VALID_NOTES:
         continue
-      # for now, vexflow does not render rests... TODO
-      if n.note == globals.REST:
-        continue
       dur = n.duration
       if n.note != globals.REST:
         nearest = self.fretboard.findNearest(curr, n)

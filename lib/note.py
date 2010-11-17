@@ -295,7 +295,6 @@ class Note(object):
     self.note = self.indexToNote(index)
     self.adjustAccidental()
 
-  # TODO: c-flat is a b, b-sharp is a c, etc.
   def adjustAccidental(self):
     if self.note in ['b','e'] and self.accidental == globals.SHARP:
       self.accidental = globals.NATURAL
