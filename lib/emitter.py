@@ -26,8 +26,8 @@ import globals
 
 # split on spaces & punctuation
 # known abnormality on apostrophes. keep for now.
-def stringToTokens(str):
-  return re.sub(r"([\W])", r" \1 ", str).split()
+def stringToTokens(s):
+  return re.sub(r"([\W])", r" \1 ", s.replace('\'','')).split()
 
 # generate a feature vector for a given input word string
 def wordToFV(word):
@@ -42,7 +42,7 @@ def wordToFV(word):
     if n >= 0 and n < len(fv):
       fv[n] += (1.0 + 0.1*(len(word)-i))/len(word)
       if c in 'abcdefg':
-        fv[n] += 1.0/len(word)
+        fv[n] += 0.5/len(word)
   return fv
 
 # based on the input vector, score and return sorted list of notes
