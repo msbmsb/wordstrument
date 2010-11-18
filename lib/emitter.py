@@ -129,6 +129,8 @@ def emitRest(t):
   if(t == '-'): note_to_emit.duration = 0.25
   if(t == ':'): note_to_emit.duration = 0.125
   if(t == ';'): note_to_emit.duration = 0.5
+  # for joe: TILDEROCK
+  if(t == '~'): note_to_emit.duration = 0.03125
 
   if note_to_emit.duration == None:
     return None
