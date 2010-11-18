@@ -7,6 +7,7 @@ General
   * replace accidental notation with enumeration
   * improve fretboard next nearest lookup by adding additional lookahead to distance calc
   * test numbers in string
+  * add timing
 
 Features
   * add option for splitting on syllables
