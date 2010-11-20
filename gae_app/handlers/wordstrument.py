@@ -26,7 +26,7 @@ class WordstrumentHandler(webapp.RequestHandler):
   def get(self):
     input = self.request.get('q')
     if input is not None and input != '':
-      template_values = self.runWordstrument(
+      template_values = self.run_wordstrument(
         urllib.unquote_plus(self.request.get('q')), 
         urllib.unquote_plus(self.request.get('s'))
       )
