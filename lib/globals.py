@@ -113,3 +113,14 @@ MIN_OCTAVE = 2
 SHARP = '#'
 FLAT = 'b'
 NATURAL = 'n'
+
+VALID_DURATIONS = [
+  0.03125,
+  0.0625,
+  0.125,
+  0.25,
+  0.375,
+  0.5,
+  0.75,
+  1.0
+]
