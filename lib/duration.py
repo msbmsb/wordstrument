@@ -28,7 +28,7 @@ def calculate_duration(t):
   return 1.0 # 11+
 
 # VexFlow notation
-vexFlowNotation = {
+_vexflow_notation = {
   0.03125:'32',
   0.0625:'16',
   0.125:'8',
@@ -39,16 +39,18 @@ vexFlowNotation = {
   1.0:'w'
 }
 
-vexFlowToNormalNotation = dict((v,k) for k, v in vexFlowNotation.iteritems())
+_vexflow_to_normal_notation = dict(
+  (v,k) for k, v in _vexflow_notation.iteritems()
+)
 
 # transform float duration to vexflow notation
-def toVexFlowNotation(d):
+def to_vexflow_notation(d):
   rest = ''
   if type(d) is not float and d[-1] == 'r':
     k = float(d[:-1])
     rest = 'r'
   else:
     k = d
-    if k not in vexFlowNotation.keys():
+    if k not in _vexflow_notation.keys():
       return None
-  return str(vexFlowNotation[k]) + rest
+  return str(_vexflow_notation[k]) + rest

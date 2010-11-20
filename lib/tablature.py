@@ -16,7 +16,7 @@ Contains two classes:
 
 from math import sqrt
 from lib.note import Note
-from lib.duration import toVexFlowNotation
+from lib.duration import to_vexflow_notation
 import globals
 
 # standard tuning
@@ -27,7 +27,7 @@ six_string_std = [
 # 27*[6*[""]]
 # standard tuning
 # not actually used since the fretboard is automatically generated
-# given the tuning by GuitarFretboard.buildFretStringTable
+# given the tuning by GuitarFretboard.build_fret_string_table
 six_string_fret_notes = [
   ['e2',	'a2',	'd3',	'g3',	'b3',	'e4'],
   ['f2',	'a2#',	'd3#',	'g3#',	'c4',	'f4'],
@@ -69,33 +69,33 @@ class GuitarFretboard(object):
     self.num_frets = 27
     # default 6-string
     self.num_strings = 6
-    self.fret_string_table = []
+    self._fret_string_table = []
     if tuning:
-      self.buildFretStringTable(tuning)
+      self._build_fret_string_table(tuning)
       self.num_strings = len(tuning)
 
-  def buildFretStringTable(self, tuning):
-    self.fret_string_table.append(tuning)
+  def _build_fret_string_table(self, tuning):
+    self._fret_string_table.append(tuning)
     for f in range(self.num_frets):
       if f == 0: continue
-      self.fret_string_table.append([])
+      self._fret_string_table.append([])
       for s in range(len(tuning)):
-        prev = Note(self.fret_string_table[f-1][s])
+        prev = Note(self._fret_string_table[f-1][s])
         prev.inc(True)
-        self.fret_string_table[f].append(prev.to_str())
+        self._fret_string_table[f].append(prev.to_str())
 
   # return the fret-string index of the input note
   # this index is the table index i.e. (0..5), so the string number 
   # is not aligned with typical string numbering i.e. (6..1)
-  def index(self, note_in):
+  def _index(self, note_in):
     locs = []
     # if is flat, make sharp, the frets are built using only sharps, no flats
     if note_in.accidental == globals.FLAT:
-      note_in = note_in.getAlternateNotation()
+      note_in = note_in.get_alternate_notation()
     note = note_in.to_str()
-    for f,fret in enumerate(self.fret_string_table):
+    for f,fret in enumerate(self._fret_string_table):
       for s,string in enumerate(fret):
-        if note.find(self.fret_string_table[f][s]) != -1:
+        if note.find(self._fret_string_table[f][s]) != -1:
           locs.append((f,s))
     return locs
 
@@ -103,8 +103,8 @@ class GuitarFretboard(object):
   # TODO do this in a tripled manner to reduce the number of reverse direction moves
   # i.e. move up two frets for i+1 but i+2 is backward from the ith fret and there is a 2nd-closest
   #      i+1 location that could be used instead. -> minimize movements over groups of notes
-  def findNearest(self, current, next_note):
-    next_locs = self.index(next_note)
+  def _find_nearest(self, current, next_note):
+    next_locs = self._index(next_note)
     if not next_locs:
       return None
     nearest_loc_index = sorted(dict((i,score) for i,score in enumerate([sqrt((current[0]-loc[0])**2 + ((current[1]-loc[1])*STRING_DIST_MUL)**2) for loc in next_locs])).iteritems(), key=lambda (k,v):(v,k))[0][0]
@@ -116,11 +116,11 @@ class GuitarFretboard(object):
     # string numbers
     retVal += '\t'.join([str(i) for i in range(6,0,-1)])
     retVal += '\n'
-    for f,fret in enumerate(self.fret_string_table):
+    for f,fret in enumerate(self._fret_string_table):
       # fret number
       retVal += "%i\t" % f
       for s,string in enumerate(fret):
-        retVal += "%s\t" % self.fret_string_table[f][s]
+        retVal += "%s\t" % self._fret_string_table[f][s]
       retVal += "\n"
     return retVal
 
@@ -128,26 +128,26 @@ class GuitarTabSequence(object):
   def __init__(self, fretboard, note_sequence):
     self.fretboard = fretboard
     self.note_sequence = note_sequence
-    self.tab_sequence = []
-    self.buildTabSequence()
+    self._tab_sequence = []
+    self._build_tab_sequence()
 
-  def buildTabSequence(self):
+  def _build_tab_sequence(self):
     curr = (0,0)
     for n in self.note_sequence.notes:
       if n.note not in globals.ALL_VALID_NOTES:
         continue
       dur = n.duration
       if n.note != globals.REST:
-        nearest = self.fretboard.findNearest(curr, n)
+        nearest = self.fretboard._find_nearest(curr, n)
         if not nearest:
           continue
         curr = nearest
       else:
         dur = str(dur) + 'r'
         nearest = (0,0)
-      self.tab_sequence.append((nearest,n.text,dur))
+      self._tab_sequence.append((nearest,n.text,dur))
 
-  def indexToStringNum(self, index):
+  def _index_to_string_num(self, index):
     return self.fretboard.num_strings - index
 
   def split_str(self):
@@ -157,7 +157,7 @@ class GuitarTabSequence(object):
     start = 0
     end = 8
     retVal = []
-    while start < len(self.tab_sequence):
+    while start < len(self._tab_sequence):
       retVal.append(self.to_str(start, end))
       start += notes_per_split
       end += notes_per_split

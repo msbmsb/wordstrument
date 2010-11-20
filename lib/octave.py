@@ -10,7 +10,7 @@ Variables and functions for selecting the octave value for a given string.
 from math import floor
 import unicodedata
 
-octave_list = [3,3,4,4,4,5,5,5,4,4,4,4,3,3,3,3,2,2,5,5,3,2,2,2,2,2]
+_octave_list = [3,3,4,4,4,5,5,5,4,4,4,4,3,3,3,3,2,2,5,5,3,2,2,2,2,2]
 
 def choose_octave(word):
   if(word == None or word == ''):
@@ -26,7 +26,7 @@ def choose_octave(word):
       
   index = int(floor(tot/len(word)))
   if(index >= 0 and index < 26):
-    return octave_list[index]
+    return _octave_list[index]
   else:
     return 4
 

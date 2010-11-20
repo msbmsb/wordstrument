@@ -11,7 +11,7 @@ from copy import deepcopy
 import globals
 from note import Note
 
-step_patterns = {
+_step_patterns = {
   'major':[1,1,0.5,1,1,1,0.5],
   'natural_minor':[1,0.5,1,1,0.5,1,1],
   'harmonic_minor':[1,0.5,1,1,0.5,1.5,0.5],
@@ -21,15 +21,24 @@ step_patterns = {
   'minor_pentatonic_blues':[1.5,1,1,1.5,1]
 }
 
+def get_scale_names():
+  return _step_patterns.keys()
+
+def get_default():
+  return 'major'
+
+def is_valid_scale(scale_name):
+  return scale_name in _step_patterns.keys()
+
 # direction: 1=up, -1=down, None=none-specified
 def get_scale(notes, scale, direction=None):
-  if scale not in step_patterns.keys():
+  if scale not in _step_patterns.keys():
     return None
 
   if len(notes) < 2:
     return None
 
-  scale_pattern = step_patterns[scale]
+  scale_pattern = _step_patterns[scale]
   
   if not direction or abs(direction) != 1:
     direction = 1
@@ -68,7 +77,7 @@ def get_scale(notes, scale, direction=None):
     # when what is needed is one note instance for all notes in scale, i.e. it's missing the b
     # use alternate notation to turn that a-# into b-flat so that b is represented in scale
     if new_note.note in added_notes:
-      new_note = new_note.getAlternateNotation()
+      new_note = new_note.get_alternate_notation()
 
     allowable_notes.append(new_note)
     added_notes.append(new_note.note)

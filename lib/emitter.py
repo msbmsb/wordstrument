@@ -26,11 +26,11 @@ import globals
 
 # split on spaces & punctuation
 # known abnormality on apostrophes. keep for now.
-def stringToTokens(s):
+def string_to_tokens(s):
   return re.sub(r"([\W])", r" \1 ", s.replace('\'','')).split()
 
 # generate a feature vector for a given input word string
-def wordToFV(word):
+def _word_to_fv(word):
   fv = list(globals.ALPHA)
 
   # normalize all unicode characters
@@ -47,7 +47,7 @@ def wordToFV(word):
 
 # based on the input vector, score and return sorted list of notes
 # with octave markers
-def scoreNotes(fv):
+def _score_notes(fv):
   scores = {
     'a3':cosine_similarity(globals.a0,fv),
     'b3':cosine_similarity(globals.b0,fv),
@@ -80,7 +80,7 @@ def scoreNotes(fv):
 
 # based on the input vector, score and return sorted list of notes
 # with no octave markers
-def scoreNotesNoOctave(fv):
+def _score_notes_no_octave(fv):
   scores = {
     'a':cosine_similarity(globals.a,fv),
     'b':cosine_similarity(globals.b,fv),
@@ -93,12 +93,12 @@ def scoreNotesNoOctave(fv):
   return sorted(scores.iteritems(), key=lambda (k,v):(v,k), reverse=True)
 
 # emit a Note object from the input string
-def emitNote(t):
+def emit_note(t):
   if t in punctuation:
-    return emitRest(t)
+    return _emit_rest(t)
 
-  fv = wordToFV(t)
-  sorted_scores = scoreNotesNoOctave(fv)
+  fv = _word_to_fv(t)
+  sorted_scores = _score_notes_no_octave(fv)
 
   note = ''
   top_scores = selection.choose_top_score(sorted_scores)
@@ -116,7 +116,7 @@ def emitNote(t):
   return note_to_emit
 
 # emit a rest Note from the input string
-def emitRest(t):
+def _emit_rest(t):
   note_to_emit = Note(globals.REST_NOTE)
   note_to_emit.text = t
   note_to_emit.duration = None
