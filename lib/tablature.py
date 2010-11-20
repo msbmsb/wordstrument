@@ -168,28 +168,35 @@ class GuitarTabSequence(object):
       return self.split_str_by_notes()
 
     start = 0
+    end_index = bars_per_split-1
     if len(self.note_sequence.bar_markers) > bars_per_split:
-      end = self.note_sequence.bar_markers[bars_per_split]
+      end = self.note_sequence.bar_markers[end_index]
     else:
       end = self.note_sequence.bar_markers[-1]
+      end_index = -1
     retVal = []
-    while start < len(self.tab_sequence):
+    while start < len(self._tab_sequence) and start < end:
       retVal.append(self.to_str(start, end))
       start = end + 1
-      if len(self.note_sequence.bar_markers) > end+bars_per_split:
-        end = self.note_sequence.bar_markers[end+bars_per_split]
+      if end_index >= 0 and \
+        len(self.note_sequence.bar_markers) > end_index+bars_per_split:
+          end_index += bars_per_split
+          end = self.note_sequence.bar_markers[end_index]
       else:
         end = self.note_sequence.bar_markers[-1]
+        end_index = -1
     return retVal
 
   def to_str(self, start=0, end=None):
     retVal = ""
-    if end is None or end < start or end > len(self.tab_sequence):
-      end = len(self.tab_sequence)
+    if end is None or end < start or end > len(self._tab_sequence):
+      end = len(self._tab_sequence)
     if start < 0 or start >= end:
       return ""
-    for i,n in enumerate(self.tab_sequence[start:end]):
-      retVal += "\"%s :%s %i/%i " % (n[-2],toVexFlowNotation(n[-1]),n[0][0],self.indexToStringNum(n[0][1]))
+    i = start
+    for n in self._tab_sequence[start:end+1]:
+      retVal += "\"%s :%s %i/%i " % (n[-2],to_vexflow_notation(n[-1]),n[0][0],self._index_to_string_num(n[0][1]))
       if i in self.note_sequence.bar_markers:
         retVal += " | "
+      i += 1
     return retVal.strip()

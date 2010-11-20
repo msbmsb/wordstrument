@@ -145,4 +145,9 @@ class Sequence(object):
         bar_duration = 0.0
         self.bar_markers.append(i)
       else:
-        bar_duration = nextsum
+        if i == len(self.notes)-1:
+          diff = self.beats_per_bar - bar_duration
+          n.duration = diff
+          self.bar_markers.append(i)
+        else:
+          bar_duration = nextsum
