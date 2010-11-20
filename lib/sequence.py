@@ -24,6 +24,8 @@ class Sequence(object):
     self.scale_map = {}
     self.build_notes()
     self.beats_per_bar = 1.0
+    # index of bar_markers is the end of a bar
+    self.bar_markers = []
 
   def build_notes(self):
     toks = emitter.stringToTokens(self.source_string)
@@ -50,8 +52,10 @@ class Sequence(object):
     if not self.notes:
       return retStr
 
-    for n in self.notes:
+    for i,n in enumerate(self.notes):
       retStr += "| %s " % n.to_str()
+      if i in self.bar_markers:
+        retStr += " BAR| "
     return retStr
 
   def add(self, note):
@@ -106,3 +110,39 @@ class Sequence(object):
         continue
 
       n.accidental = self.scale_map[n.note]
+
+  # modify durations as necessary to fit notes into time signature
+  # specified by self.beats_per_bar
+  def snapToTimeSignature(self):
+    if not self.beats_per_bar or self.beats_per_bar <= 0.1:
+      print "ERROR: No time signature specified."
+      return
+
+    bar_duration = 0.0
+    for i,n in enumerate(self.notes):
+      nextsum = bar_duration + n.duration
+      if nextsum > self.beats_per_bar:
+        # modify last note's duration to fit
+        # set bar marker to this index
+        diff = self.beats_per_bar - bar_duration
+        if diff not in globals.VALID_DURATIONS and \
+          globals.VALID_DURATIONS[0] < diff and \
+          globals.VALID_DURATIONS[-1] > diff:
+          # find the next smallest duration to diff
+          # VALID_DURATIONS is short and sorted, just linearly iterate
+          for j in range(len(globals.VALID_DURATIONS[1:])):
+            if globals.VALID_DURATIONS[j] > diff:
+              if globals.VALID_DURATIONS[j-1] == n.duration and j > 1:
+                n.duration = globals.VALID_DURATIONS[j-2]
+              else:
+                n.duration = globals.VALID_DURATIONS[j-1]
+              break
+        else:
+          n.duration = diff
+        nextsum = bar_duration + n.duration
+
+      if nextsum == self.beats_per_bar:
+        bar_duration = 0.0
+        self.bar_markers.append(i)
+      else:
+        bar_duration = nextsum
