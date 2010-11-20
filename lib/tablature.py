@@ -150,7 +150,10 @@ class GuitarTabSequence(object):
   def indexToStringNum(self, index):
     return self.fretboard.num_strings - index
 
-  def split_str(self, notes_per_split=8):
+  def split_str(self):
+    return self.split_str_by_bars()
+
+  def split_str_by_notes(self, notes_per_split=8):
     start = 0
     end = 8
     retVal = []
@@ -160,23 +163,33 @@ class GuitarTabSequence(object):
       end += notes_per_split
     return retVal
 
+  def split_str_by_bars(self, bars_per_split=2):
+    if not self.note_sequence.bar_markers:
+      return self.split_str_by_notes()
+
+    start = 0
+    if len(self.note_sequence.bar_markers) > bars_per_split:
+      end = self.note_sequence.bar_markers[bars_per_split]
+    else:
+      end = self.note_sequence.bar_markers[-1]
+    retVal = []
+    while start < len(self.tab_sequence):
+      retVal.append(self.to_str(start, end))
+      start = end + 1
+      if len(self.note_sequence.bar_markers) > end+bars_per_split:
+        end = self.note_sequence.bar_markers[end+bars_per_split]
+      else:
+        end = self.note_sequence.bar_markers[-1]
+    return retVal
+
   def to_str(self, start=0, end=None):
     retVal = ""
-    bar_duration = 0.0
     if end is None or end < start or end > len(self.tab_sequence):
       end = len(self.tab_sequence)
     if start < 0 or start >= end:
       return ""
-    for n in self.tab_sequence[start:end]:
-      if type(n[-1]) is not float and n[-1][-1] == 'r':
-        dur = float(n[-1][:-1])
-        bar_duration += dur
-      else:
-        dur = n[-1]
-        bar_duration += dur
-      # disable time bar display for now. TODO
-      if None and bar_duration >= self.note_sequence.beats_per_bar:
-        retVal += " | "
-        bar_duration = dur
+    for i,n in enumerate(self.tab_sequence[start:end]):
       retVal += "\"%s :%s %i/%i " % (n[-2],toVexFlowNotation(n[-1]),n[0][0],self.indexToStringNum(n[0][1]))
+      if i in self.note_sequence.bar_markers:
+        retVal += " | "
     return retVal.strip()
