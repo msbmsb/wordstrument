@@ -39,12 +39,20 @@ _vexflow_notation = {
   1.0:'w'
 }
 
+# vexflow does not currently output qdr, hdr
+_no_matching_vexflow_notation = [
+  '0.75r', '0.375r'
+]
+
 _vexflow_to_normal_notation = dict(
   (v,k) for k, v in _vexflow_notation.iteritems()
 )
 
 # transform float duration to vexflow notation
 def to_vexflow_notation(d):
+  if d in _no_matching_vexflow_notation:
+    return None
+
   rest = ''
   if type(d) is not float and d[-1] == 'r':
     k = float(d[:-1])
