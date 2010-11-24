@@ -39,6 +39,8 @@ def _word_to_fv(word):
   
   for i,c in enumerate(word.lower()):
     n = ord(c) - 97
+    if(n < 0):
+      n += ord('0')
     if n >= 0 and n < len(fv):
       fv[n] += (1.0 + 0.1*(len(word)-i))/len(word)
       if c in 'abcdefg':
