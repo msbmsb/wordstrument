@@ -195,6 +195,8 @@ class GuitarTabSequence(object):
       return ""
     i = start
     for n in self._tab_sequence[start:end+1]:
+      if i > 0 and i != start and (i-1) in self.note_sequence.bar_markers:
+        retVal += " | "
       dur = n[-1]
       dvfn = to_vexflow_notation(dur)
       if dvfn is None:
@@ -210,7 +212,5 @@ class GuitarTabSequence(object):
         retVal += ":%s %i/%i " % (dvfn1,n[0][0],self._index_to_string_num(n[0][1]))
       else:
         retVal += "\"%s :%s %i/%i " % (n[-2],dvfn,n[0][0],self._index_to_string_num(n[0][1]))
-      if i in self.note_sequence.bar_markers:
-        retVal += " | "
       i += 1
     return retVal.strip()
