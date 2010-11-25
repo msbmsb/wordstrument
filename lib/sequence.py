@@ -10,19 +10,22 @@ Contains one class
 * License:      MIT License: http://creativecommons.org/licenses/MIT/
 """
 
+from copy import deepcopy
+
 from note import Note
 import scale
 import emitter
 import globals
 
 class Sequence(object):
-  def __init__(self, str):
-    self.source_string = str.strip()
+  def __init__(self, str_):
+    self.source_string = str_.strip()
     self.notes = []
     self.scale_name = ""
     self.scale_notes = []
     self.scale_map = {}
-    self.build_notes()
+    if str_:
+      self.build_notes()
     self.beats_per_bar = 1.0
     # index of bar_markers is the end of a bar
     self.bar_markers = []
@@ -44,7 +47,7 @@ class Sequence(object):
             elif diff < 0:
               n.octave += octmod
         self.add(n)
-        if n.note != globals.REST:
+        if n.pitch != globals.REST:
           prev = n
 
   def to_str(self):
@@ -67,11 +70,35 @@ class Sequence(object):
 
   def get_root(self):
     if self.scale_notes:
-      return self.scale_notes[0].note
+      return self.scale_notes[0].pitch
     elif self.notes:
-      return self.notes[0].note
+      return self.notes[0].pitch
     else:
       return None
+
+  def fill_sequence(self, starting_from, ending_at):
+    if not self.scale_name:
+      self.setScale(None)
+    curr = starting_from
+    done = False
+    while not done:
+      if self.check_scale(curr):
+        self.add(deepcopy(curr))
+      else:
+        alt = curr.get_alternate_notation()
+        if self.check_scale(alt):
+          self.add(deepcopy(alt))
+          curr = alt
+      curr.inc(True)
+      if curr.is_equiv_to(ending_at):
+        done = True
+
+  def check_scale(self, note):
+    n_acc = self.scale_map[note.pitch]
+    if note.accidental != n_acc:
+      return False
+    else:
+      return True
 
   def set_scale(self, scale_name):
     if not scale_name: 
@@ -95,7 +122,7 @@ class Sequence(object):
     self.scale_notes = scale.get_scale(self.notes, self.scale_name)
     if self.scale_notes:
       for n in self.scale_notes:
-        self.scale_map[n.note] = n.accidental
+        self.scale_map[n.pitch] = n.accidental
 
   def snap_to_key(self):
     if not self.scale_notes:
@@ -103,13 +130,13 @@ class Sequence(object):
       return
 
     for n in self.notes:
-      if n.note == globals.REST:
+      if n.pitch == globals.REST:
         continue
-      if n.note not in self.scale_map:
+      if n.pitch not in self.scale_map:
         self.notes.remove(n)
         continue
 
-      n.accidental = self.scale_map[n.note]
+      n.accidental = self.scale_map[n.pitch]
 
   # modify durations as necessary to fit notes into time signature
   # specified by self.beats_per_bar
@@ -120,6 +147,8 @@ class Sequence(object):
 
     bar_duration = 0.0
     for i,n in enumerate(self.notes):
+      if not n.duration:
+        continue
       nextsum = bar_duration + n.duration
       if nextsum > self.beats_per_bar:
         # modify last note's duration to fit

@@ -110,7 +110,7 @@ def emit_note(t):
     note = top_scores[0]
 
   note_to_emit = Note(note+str(octave.choose_octave(t)))
-  note_to_emit.accidental = accidental.choose_accidental(fv, note_to_emit.note)
+  note_to_emit.accidental = accidental.choose_accidental(fv, note_to_emit.pitch)
   note_to_emit.duration = duration.calculate_duration(t)
   note_to_emit.fv = fv
   note_to_emit.text = t

@@ -35,8 +35,8 @@ def get_scale(notes, scale, direction=None):
   if scale not in _step_patterns.keys():
     return None
 
-  if len(notes) < 2:
-    return None
+#   if len(notes) < 2:
+#     return None
 
   scale_pattern = _step_patterns[scale]
   
@@ -67,7 +67,7 @@ def get_scale(notes, scale, direction=None):
       else:
         new_note.inc(True)
 
-    prev_note = prev.note
+    prev_note = prev.pitch
     prev = deepcopy(new_note)
     new_note.octave = 0
     new_note.duration = 0.0
@@ -76,10 +76,10 @@ def get_scale(notes, scale, direction=None):
     # g-n...a-n...a-#...c-n
     # when what is needed is one note instance for all notes in scale, i.e. it's missing the b
     # use alternate notation to turn that a-# into b-flat so that b is represented in scale
-    if new_note.note in added_notes:
+    if new_note.pitch in added_notes:
       new_note = new_note.get_alternate_notation()
 
     allowable_notes.append(new_note)
-    added_notes.append(new_note.note)
+    added_notes.append(new_note.pitch)
 
   return allowable_notes
