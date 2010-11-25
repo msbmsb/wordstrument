@@ -50,6 +50,10 @@ _vexflow_to_normal_notation = dict(
 
 # transform float duration to vexflow notation
 def to_vexflow_notation(d):
+  if not d:
+    # default
+    return 'q'
+
   if d in _no_matching_vexflow_notation:
     return None
 
