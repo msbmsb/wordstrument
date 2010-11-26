@@ -160,10 +160,10 @@ class GuitarTabSequence(object):
 
   def split_str_by_notes(self, notes_per_split=8):
     start = 0
-    end = 8
+    end = notes_per_split
     retVal = []
     while start < len(self._tab_sequence):
-      retVal.append(self.to_str(start, end))
+      retVal.append(self.to_str(start, end-1))
       start += notes_per_split
       end += notes_per_split
     return retVal
