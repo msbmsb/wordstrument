@@ -37,6 +37,9 @@ class Note(object):
     else:
       return "%s%s/%s" % (self.pitch, self.octave, self.accidental)
 
+  def to_str_normal(self):
+    return "%s%s%s" % (self.pitch.upper(), self.octave, self.accidental)
+
   def pitch_to_index(self, note_in=None):
     whatToIndex = self.pitch
     if note_in:
