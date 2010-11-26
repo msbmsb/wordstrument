@@ -148,7 +148,11 @@ class GuitarTabSequence(object):
         nearest = (0,0)
       self._tab_sequence.append((nearest,n.text,dur))
 
-  def _index_to_string_num(self, index):
+  # fret_string: (fret,string)
+  def add(self, fret_string, text, dur):
+    self._tab_sequence.append((fret_string, text, dur))
+
+  def index_to_string_num(self, index):
     return self.fretboard.num_strings - index
 
   def split_str(self):
@@ -196,8 +200,9 @@ class GuitarTabSequence(object):
       return ""
     i = start
     for n in self._tab_sequence[start:end+1]:
-      if i > 0 and i != start and (i-1) in self.note_sequence.bar_markers:
-        retVal += " | "
+      if i > 0 and i != start and \
+        self.note_sequence and (i-1) in self.note_sequence.bar_markers:
+          retVal += " | "
       dur = n[-1]
       dvfn = to_vexflow_notation(dur)
       if dvfn is None:
@@ -209,10 +214,10 @@ class GuitarTabSequence(object):
         nn1 = nn0 * 0.5
         dvfn0 = to_vexflow_notation(str(nn0) + rest)
         dvfn1 = to_vexflow_notation(str(nn1) + rest)
-        retVal += self.build_tab_string(n[-2],dvfn0,n[0][0],self._index_to_string_num(n[0][1]))
-        retVal += self.build_tab_string(None,dvfn1,n[0][0],self._index_to_string_num(n[0][1]))
+        retVal += self.build_tab_string(n[-2],dvfn0,n[0][0],self.index_to_string_num(n[0][1]))
+        retVal += self.build_tab_string(None,dvfn1,n[0][0],self.index_to_string_num(n[0][1]))
       else:
-        retVal += self.build_tab_string(n[-2],dvfn,n[0][0],self._index_to_string_num(n[0][1]))
+        retVal += self.build_tab_string(n[-2],dvfn,n[0][0],self.index_to_string_num(n[0][1]))
       i += 1
     return retVal.strip()
 
