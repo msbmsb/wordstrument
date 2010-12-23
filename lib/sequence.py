@@ -157,15 +157,9 @@ class Sequence(object):
         if diff not in globals.VALID_DURATIONS and \
           globals.VALID_DURATIONS[0] < diff and \
           globals.VALID_DURATIONS[-1] > diff:
-          # find the next smallest duration to diff
-          # VALID_DURATIONS is short and sorted, just linearly iterate
-          for j in range(len(globals.VALID_DURATIONS[1:])):
-            if globals.VALID_DURATIONS[j] > diff:
-              if globals.VALID_DURATIONS[j-1] == n.duration and j > 1:
-                n.duration = globals.VALID_DURATIONS[j-2]
-              else:
-                n.duration = globals.VALID_DURATIONS[j-1]
-              break
+          next_sm = self._next_smallest_duration(diff, n.duration)
+          if next_sm:
+            n.duration = next_sm
         else:
           n.duration = diff
         nextsum = bar_duration + n.duration
@@ -176,7 +170,27 @@ class Sequence(object):
       else:
         if i == len(self.notes)-1:
           diff = self.beats_per_bar - bar_duration
-          n.duration = diff
+          if diff not in globals.VALID_DURATIONS and \
+              globals.VALID_DURATIONS[0] < diff and \
+              globals.VALID_DURATIONS[-1] > diff:
+            next_sm = self._next_smallest_duration(diff, n.duration)
+            if next_sm:
+              n.duration = next_sm
+          else:
+            n.duration = diff
           self.bar_markers.append(i)
         else:
           bar_duration = nextsum
+
+  def _next_smallest_duration(self, diff, curr_duration=-1.0):
+    # find the next smallest duration to diff
+    # VALID_DURATIONS is short and sorted, just linearly iterate
+    retVal = None
+    for j in range(len(globals.VALID_DURATIONS[1:])):
+      if globals.VALID_DURATIONS[j] > diff:
+        if globals.VALID_DURATIONS[j-1] == curr_duration and j > 1:
+          retVal = globals.VALID_DURATIONS[j-2]
+        else:
+          retVal = globals.VALID_DURATIONS[j-1]
+        break
+    return retVal
