@@ -74,10 +74,8 @@ class WordstrumentHandler(webapp.RequestHandler):
     template_values = {
       'http_get': False,
       'text_in': text_in,
-      'raw_notes': raw_notes_str,
       'root': raw_notes.get_root(),
       'scale_used': raw_notes.get_scale_name(),
-      'in_key_notes': in_key_notes_str,
       'scales': get_scale_names(),
       'vextab_codes': tab.split_str(),
       'url_query': urllib.urlencode(dict([['q',text_in],['s',raw_notes.get_scale_name()]]))

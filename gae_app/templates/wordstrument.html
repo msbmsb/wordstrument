@@ -33,11 +33,7 @@
       <div class="entry">
           <h3>Here is what the wordstrument produced for the text:</h3>
           <p class="box1"> {{ text_in }} </p>
-          <h3>Raw notes:</h3>
-          <p class="box2"> {{ raw_notes }} </p>
-          <h3>In-key notes for the key of {{ root }}-{{ scale_used }}:</h3>
-          <p class="box2"> {{ in_key_notes }} </p>
-          <h3>Notation:</h3>
+          <h3>In the key of {{ root }}-{{ scale_used }}:</h3>
           {% for vextab_code in vextab_codes %}
           <div class="vex-tabdiv" width=680 scale=0.95>
             tabstave notation=true
@@ -46,7 +42,9 @@
           {% endfor %}
           <a href="http://wordstrumenttest.appspot.com/ws?{{ url_query }}">Link to this</a>
       </div>
+    </div>
 
+    <div class="post">
       <h1 class="title">Enter some more text</h1>
       <div class="entry">
           <p>
