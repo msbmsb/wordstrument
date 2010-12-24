@@ -194,3 +194,41 @@ class Sequence(object):
           retVal = globals.VALID_DURATIONS[j-1]
         break
     return retVal
+
+  def to_abc_notation(self):
+    retVal = ""
+
+    for i,n in enumerate(self.notes):
+      if n.pitch == globals.REST:
+        retVal += "z"
+      else:  
+        # notes from mid octave down are capitalized, else lowercase
+        diff_from_mid = 4 - n.octave
+        if diff_from_mid >= 0:
+          retVal += n.pitch.upper()
+          for j in range(diff_from_mid):
+            retVal += ","
+        else:
+          retVal += n.pitch.lower()
+          for j in range(diff_from_mid):
+            retVal += "'"
+
+      # accidental
+      if n.accidental == globals.SHARP:
+        retVal += "^"
+      elif n.accidental == globals.FLAT:
+        retVal += "_"
+      
+      # duration
+      # based on default eigth notes
+      diff_from_eigth = n.duration / 0.125
+      if diff_from_eigth > 1.0:
+        retVal += str(int(diff_from_eigth))
+      elif diff_from_eigth < 1.0:
+        retVal += "/"
+        retVal += str(int(1.0 / diff_from_eigth))
+
+      if i in self.bar_markers:
+        retVal += " "
+
+    return retVal

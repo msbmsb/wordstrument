@@ -372,3 +372,8 @@ html>body #footer {
 	font-weight: normal;
 	color: #c0c0c0;
 }
+
+.offscreen { 
+  position: absolute; left: -5000; 
+  visibility: hidden;
+}

@@ -17,6 +17,7 @@
           <p>
             <form method="POST" action="/ws">
               Enter some text to turn into music ("music"?):
+              <br />
               <textarea name="content" rows="3" cols="60"></textarea>
               <br />Choose your scale:<br />
               {% for scale in scales %}
@@ -40,6 +41,10 @@
             notes {{ vextab_code }}
           </div>
           {% endfor %}
+          <br /><br />
+          <input type="hidden" name="abc_notation" id="abc_notation" value="{{ abc_notation }}" />
+          <input type="submit" id="button" value="Hear this" onclick="playMusic(makeUrl(readField('abc_notation')))"/>  <input type="submit" id="button" value="Stop" onclick="stopMusic()" />
+          <br />
           <a href="http://wordstrumenttest.appspot.com/ws?{{ url_query }}">Link to this</a>
       </div>
     </div>
@@ -50,7 +55,8 @@
           <p>
             <form method="POST" action="/ws">
               Enter some text to turn into music ("music"?):
-              <textarea name="content" rows="3" cols="60"></textarea>
+              <br />
+              <textarea name="content" rows="3" cols="60">{{ text_in }}</textarea>
               <br />Choose your scale:<br />
               {% for scale in scales %}
                 <br /><input type="radio" name="scale" id="scale" value={{ scale }} />{{ scale }}

@@ -20,6 +20,7 @@ def main():
     application = webapp.WSGIApplication([
       ('/', handlers.about.AboutHandler),
       ('/ws', handlers.wordstrument.WordstrumentHandler),
+      ('/midi', handlers.wordstrument.MidiHandler),
     ], debug=True)
     util.run_wsgi_app(application)
 
