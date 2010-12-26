@@ -18,8 +18,9 @@ import handlers.about
 
 def main():
     application = webapp.WSGIApplication([
-      ('/', handlers.about.AboutHandler),
+      ('/', handlers.wordstrument.WordstrumentHandler),
       ('/ws', handlers.wordstrument.WordstrumentHandler),
+      ('/about', handlers.about.AboutHandler),
       ('/midi', handlers.wordstrument.MidiHandler),
     ], debug=True)
     util.run_wsgi_app(application)
